@@ -1,0 +1,4 @@
+brokerest
+=========
+
+Python REST client
