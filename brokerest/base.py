@@ -1,4 +1,4 @@
-from .errors import *
+from errors import ObjectNotFound
 import json
 import requests
 import re
@@ -84,6 +84,8 @@ class classproperty(property):
 class BaseModel(BaseObject):
 
     criteria_class = BaseCriteria
+    
+    ObjectNotFound = ObjectNotFound
 
     def __str__(self):
         return "%s #%s" % (self.__class__.__name__, self.obj_id())
