@@ -54,7 +54,6 @@ class RestlessCriteria(BaseCriteria):
     def one(self):
         self._single = True
         resp = self.request()
-        print resp
         if not resp:
             raise ResourceNotFound()
         
