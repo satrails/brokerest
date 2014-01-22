@@ -143,7 +143,7 @@ class BaseModel(BaseObject):
         if 200 <= resp.status_code < 300:
             return resp.json()
         elif 400 <= resp.status_code < 500:
-            raise ResourceNotFound(url)
+            raise ObjectNotFound(url)
         else:
             raise Exception('API query error (%s - %s): %s %s' % (url, resp.status_code, resp.text, params) )
             
