@@ -55,7 +55,7 @@ class RestlessCriteria(BaseCriteria):
         self._single = True
         resp = self.request()
         if not resp:
-            raise ResourceNotFound()
+            raise ObjectNotFound()
         
         if 'headers' in resp:
             del resp["headers"]
