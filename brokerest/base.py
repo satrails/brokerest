@@ -1,4 +1,4 @@
-from errors import ObjectNotFound
+from errors import *
 import json
 import requests
 import re
@@ -86,6 +86,8 @@ class BaseModel(BaseObject):
     criteria_class = BaseCriteria
     
     ObjectNotFound = ObjectNotFound
+    RequestError = RequestError
+    AccessError = AccessError
 
     def __str__(self):
         return "%s #%s" % (self.__class__.__name__, self.obj_id())
@@ -140,9 +142,13 @@ class BaseModel(BaseObject):
     def request(cls, method, url, params=None, headers={'Content-Type': 'application/json'}, data=None):
         
         resp = requests.request(method, url, headers=headers, data=data, params=params, timeout=80)
-        if 200 <= resp.status_code < 300:
+        if 200 <= resp.status_code < 399:
             return resp.json()
-        elif 400 <= resp.status_code < 500:
+        elif resp.status_code == 400:
+            raise RequestError(url)
+        elif resp.status_code == 401:
+            raise AccessError(url)
+        elif 402 <= resp.status_code < 500:
             raise ObjectNotFound(url)
         else:
             raise Exception('API query error (%s - %s): %s %s' % (url, resp.status_code, resp.text, params) )
