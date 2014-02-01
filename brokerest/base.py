@@ -141,10 +141,10 @@ class BaseModel(BaseObject):
     @classmethod
     def request(cls, method, url, params=None, headers={'Content-Type': 'application/json'}, data=None):
         
-        resp = requests.request(method, url, headers=headers, data=data, params=params, timeout=80)
+        resp = requests.request(method, url, headers=headers, data=json.dumps(data), params=params, timeout=80)
         if 200 <= resp.status_code < 399:
             return resp.json()
-        elif resp.status_code == 400:
+        elif resp.status_code in [400, 405]:
             raise RequestError(url)
         elif resp.status_code == 401:
             raise AccessError(url)
