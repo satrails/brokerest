@@ -49,7 +49,7 @@ class RestlessCriteria(BaseCriteria):
 
     def all(self):
         resp = self.request()
-        return [self.resource.get_from(o) for o in resp['objects']]
+        return [self.resource.get_from(o) for o in resp]
     
     def one(self):
         self._single = True
@@ -76,4 +76,10 @@ class RestlessModel(BaseModel):
 
     criteria_class = RestlessCriteria
     
-    
+    @classmethod
+    def request(cls, method, url, params=None, headers=None, data=None):
+        resp = BaseModel.request(method, url, params=params, headers=headers, data=data)
+        if 'objects' in resp:
+            return resp['objects']
+        else:
+            return resp

@@ -88,9 +88,25 @@ class BaseModel(BaseObject):
     ObjectNotFound = ObjectNotFound
     RequestError = RequestError
     AccessError = AccessError
+    
+    inline_models = dict()
 
     def __str__(self):
         return "%s #%s" % (self.__class__.__name__, self.obj_id())
+    
+    def __getitem__(self, k):
+        try:
+            return super(BaseModel, self).__getitem__(k)
+        except KeyError:
+            try:
+                resp = self.request('get', self.instance_url()+'/'+k)
+                self.load_attr(k, resp)
+                return self[k]
+                
+            except self.RequestError:
+                raise KeyError(
+                    "%r attribute or method not found, available values on this object are: %s" %
+                    (k, ', '.join(self.keys())))
     
     def obj_id(self):
         return self.id
@@ -130,9 +146,21 @@ class BaseModel(BaseObject):
         self._transient_values = self._transient_values - set(values)
         
         for k, v in values.iteritems():
-            super(BaseObject, self).__setitem__(k, v)
-                #(k, convert_to_object(v))
-
+            self.load_attr(k, v)
+            
+    def load_attr(self, k, v):
+        if isinstance(v, dict):
+            type = self.inline_models.get(k, BaseModel)
+            value = type.get_from(v)
+        elif isinstance(v, list):
+            type = self.inline_models.get(k, BaseModel)
+            value = []
+            for o in v:
+                value.append(type.get_from(o))
+        else:
+            value = v
+        super(BaseObject, self).__setitem__(k, value)
+            
     @classproperty
     @classmethod
     def find(cls):
