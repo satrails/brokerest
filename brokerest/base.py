@@ -30,13 +30,14 @@ class BaseCriteria(object):
 
 class BaseObject(dict):
     
+    _pk = 'id'
+    
     def __init__(self, id=None):
     
         self._unsaved_values = set()
         self._transient_values = set()
 
-        if id:
-            self['id'] = id
+        self[self._pk] = id
     
     def __setattr__(self, k, v):
         if k[0] == '_' or k in self.__dict__:
@@ -109,7 +110,7 @@ class BaseModel(BaseObject):
                     (k, ', '.join(self.keys())))
     
     def obj_id(self):
-        return self.id
+        return self[self._pk]
     
     def instance_url(self):
         return "%s/%s" % (self.__class__.url(), self.obj_id())
@@ -128,7 +129,7 @@ class BaseModel(BaseObject):
 
     @classmethod
     def get_from(cls, values):
-        instance = cls(values.get('id', None))
+        instance = cls(values.get(cls._pk, None))
         instance.reload_from(values)
         return instance
 
@@ -160,6 +161,23 @@ class BaseModel(BaseObject):
         else:
             value = v
         super(BaseObject, self).__setitem__(k, value)
+    
+    
+    def save(self):
+        if self.obj_id():
+            self.reload_from(self.request('put', self.instance_url(), data=self.serialize()))
+        else:
+            self.reload_from(self.request('post', self.__class__.url(), data=self.serialize()))
+            
+    def serialize(self):
+        params = {}
+        if self._unsaved_values:
+            for k in self._unsaved_values:
+                if k == self._pk:
+                    continue
+                v = getattr(self, k)
+                params[k] = v# if v is not None else ""
+        return params
             
     @classproperty
     @classmethod
