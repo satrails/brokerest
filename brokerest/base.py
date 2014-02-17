@@ -100,7 +100,7 @@ class BaseModel(BaseObject):
             return super(BaseModel, self).__getitem__(k)
         except KeyError:
             try:
-                resp = self.request('get', self.instance_url()+'/'+k)
+                resp = self.__class__.request('get', self.instance_url()+'/'+k)
                 self.load_attr(k, resp)
                 return self[k]
                 
