@@ -89,6 +89,8 @@ class BaseModel(BaseObject):
     ObjectNotFound = ObjectNotFound
     RequestError = RequestError
     AccessError = AccessError
+    MethodError = MethodError
+    IntegrityError = IntegrityError
     
     inline_models = dict()
 
@@ -190,10 +192,12 @@ class BaseModel(BaseObject):
         resp = requests.request(method, url, headers=headers, data=json.dumps(data), params=params, timeout=80)
         if 200 <= resp.status_code < 399:
             return resp.json()
-        elif resp.status_code in [400, 405]:
-            raise RequestError(url)
+        elif resp.status_code == 400:
+            raise IntegrityError(url)
         elif resp.status_code == 401:
             raise AccessError(url)
+        elif resp.status_code == 405:
+            raise MethodError(url)
         elif 402 <= resp.status_code < 500:
             raise ObjectNotFound(url)
         else:

@@ -1,15 +1,23 @@
 
-__all__ = ["RequestError", "AccessError", "ObjectNotFound", ]
+__all__ = ["RequestError", "IntegrityError", "AccessError", "MethodError", "ObjectNotFound", ]
 
-# 400
+# 4xx
 class RequestError(Exception):
     pass
     
-# 401
-class AccessError(Exception):
+# 400
+class IntegrityError(RequestError):
     pass
     
+# 401
+class AccessError(RequestError):
+    pass
+
+# 405
+class MethodError(RequestError):
+    pass
+
 # 402-499
-class ObjectNotFound(Exception):
+class ObjectNotFound(RequestError):
     pass
     
