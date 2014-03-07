@@ -171,6 +171,10 @@ class BaseModel(BaseObject):
         else:
             self.reload_from(self.request('post', self.__class__.url(), data=self.serialize()))
             
+    def delete(self):
+        if self.obj_id():
+            self.reload_from(self.request('delete', self.instance_url()))
+            
     def serialize(self):
         params = {}
         if self._unsaved_values:

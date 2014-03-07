@@ -1,10 +1,10 @@
 brokeREST
 =========
 
-Python REST client
+Python REST API client
 
 - extends standard dictionaries returned from requests into user defined generic objects
-- handle get, find, add, edit [, delete] requests
+- handle get, find, create, edit and delete requests
 - enable sub-objects, and sub-objects of sub-objects, and so on..
 - enable custom properties and methods in objects
 - easy to override request method with custom headers
@@ -67,10 +67,10 @@ It does'n metter if subobjects (author's books) are returned in same request od 
 		old_author.last_name - 'Korzeniowski'
 		old_author.save()
 		
-		# delete (undone)
-		# authors = Author.find.filter_by(first_name='William').all()
-		# for author in authors:
-		# 	author.delete()
+		# delete
+		authors = Author.find.filter_by(first_name='William').all()
+		for author in authors:
+			author.delete()
 		
 	except Author.ObjectNotFound:
 		print 'element not found'
