@@ -53,8 +53,11 @@ class RestlessCriteria(BaseCriteria):
     
     def one(self):
         self._single = True
-        resp = self.request()
-        if not resp:
+        try:
+            resp = self.request()
+            if not resp:
+                raise ObjectNotFound()
+        except IntegrityError:
             raise ObjectNotFound()
         
         if 'headers' in resp:
