@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='brokerest',
-      version='0.1.7',
+      version='0.1.8',
       description='Python REST API client',
       url='https://github.com/satrails/brokerest',
       author='Jonathon Morgan, Wiktor Wojcikowski',
