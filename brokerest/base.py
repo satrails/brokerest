@@ -55,11 +55,6 @@ class BaseObject(dict):
             raise AttributeError(*err.args)
 
     def __setitem__(self, k, v):
-        if v == "":
-            raise ValueError(
-                "You cannot set %s to an empty string. Set %s.%s = None to delete the property." % 
-                ( k, str(self), k))
-
         super(BaseObject, self).__setitem__(k, v)
         self._unsaved_values.add(k)
 
@@ -205,5 +200,5 @@ class BaseModel(BaseObject):
         elif 402 <= resp.status_code < 500:
             raise ObjectNotFound(url)
         else:
-            raise Exception('API query error (%s - %s): %s %s' % (url, resp.status_code, resp.text, params) )
+            raise RequestError('API query error (%s - %s): %s %s' % (url, resp.status_code, resp.text, params) )
             
