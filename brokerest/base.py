@@ -200,5 +200,5 @@ class BaseModel(BaseObject):
         elif 402 <= resp.status_code < 500:
             raise ObjectNotFound(url)
         else:
-            raise Exception('API query error (%s - %s): %s %s' % (url, resp.status_code, resp.text, params) )
+            raise RequestError('API query error (%s - %s): %s %s' % (url, resp.status_code, resp.text, params) )
             
