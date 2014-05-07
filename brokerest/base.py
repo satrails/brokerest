@@ -40,7 +40,7 @@ class BaseObject(dict):
         self[self._pk] = id
     
     def __setattr__(self, k, v):
-        if k[0] == '_' or k in self.__dict__:
+        if k[0] == '_' or k in self.__dict__ or hasattr(type(self), k):
             return super(BaseObject, self).__setattr__(k, v)
         else:
             self[k] = v
@@ -154,7 +154,10 @@ class BaseModel(BaseObject):
             type = self.inline_models.get(k, BaseModel)
             value = []
             for o in v:
-                value.append(type.get_from(o))
+                if type(o) == object:
+                    value.append(type.get_from(o))
+                else:
+                    value.append(o)
         else:
             value = v
         super(BaseObject, self).__setitem__(k, value)
