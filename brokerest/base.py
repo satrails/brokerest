@@ -154,7 +154,7 @@ class BaseModel(BaseObject):
             type = self.inline_models.get(k, BaseModel)
             value = []
             for o in v:
-                if type(o) == object:
+                if isinstance(v, dict) or isinstance(v, list):
                     value.append(type.get_from(o))
                 else:
                     value.append(o)
