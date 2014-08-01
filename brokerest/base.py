@@ -190,9 +190,8 @@ class BaseModel(BaseObject):
         return cls.criteria_class(cls)
         
     @classmethod
-    def request(cls, method, url, params=None, headers={'Content-Type': 'application/json'}, data=None):
-        
-        resp = requests.request(method, url, headers=headers, data=json.dumps(data), params=params, timeout=80)
+    def request_raw(cls, method, url, params=None, headers=None, data=None):
+        resp = requests.request(method, url, headers=headers, data=data, params=params, timeout=80)
         if 200 <= resp.status_code < 399:
             return resp.json()
         elif resp.status_code == 400:
@@ -205,4 +204,10 @@ class BaseModel(BaseObject):
             raise ObjectNotFound(url)
         else:
             raise RequestError('API query error (%s - %s): %s %s' % (url, resp.status_code, resp.text, params) )
+        
+        
+        
+    @classmethod
+    def request(cls, method, url, params=None, headers={'Content-Type': 'application/json'}, data=None):
+        return cls.request_raw(method, url, headers=headers, data=json.dumps(data), params=params)
             
