@@ -191,20 +191,22 @@ class BaseModel(BaseObject):
         
     @classmethod
     def request_raw(cls, method, url, params=None, headers=None, data=None):
-        resp = requests.request(method, url, headers=headers, data=data, params=params, timeout=80)
-        if 200 <= resp.status_code < 399:
-            return resp.json()
-        elif resp.status_code == 400:
-            raise IntegrityError(url)
-        elif resp.status_code == 401:
-            raise AccessError(url)
-        elif resp.status_code == 405:
-            raise MethodError(url)
-        elif 402 <= resp.status_code < 500:
-            raise ObjectNotFound(url)
-        else:
-            raise RequestError('API query error (%s - %s): %s %s' % (url, resp.status_code, resp.text, params) )
-        
+        try:
+            resp = requests.request(method, url, headers=headers, data=data, params=params, timeout=80)
+            if 200 <= resp.status_code < 399:
+                return resp.json()
+            elif resp.status_code == 400:
+                raise IntegrityError(url)
+            elif resp.status_code == 401:
+                raise AccessError(url)
+            elif resp.status_code == 405:
+                raise MethodError(url)
+            elif 402 <= resp.status_code < 500:
+                raise ObjectNotFound(url)
+            else:
+                raise RequestError('API query error (%s - %s): %s %s' % (url, resp.status_code, resp.text, params) )
+        except requests.exceptions.RequestException: 
+            raise RequestError('API query error (%s - %s): %s %s' % (url, method, headers, params) )
         
         
     @classmethod
